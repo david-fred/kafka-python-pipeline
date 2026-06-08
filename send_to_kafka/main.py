@@ -34,7 +34,7 @@ def main():
             )
 
             logging.info("Produced! Sent weather data to Kafka")
-            time.sleep(900)  # Sleep for 15 minutes
+            time.sleep(10)  
 
 if __name__ == "__main__":
     main()
