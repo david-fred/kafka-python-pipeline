@@ -1,22 +1,33 @@
 import requests
 import json
+import logging
 from quixstreams import Application
-response = requests.get(
-    "https://api.open-meteo.com/v1/forecast", params={
-        "latitude": 51.5,
-        "longitude": -0.11,
-        "current": "temperature_2m",
-    },
-)
-weather = response.json()
 
-app = Application(
-    broker_address="localhost:9092",
-    loglevel="DEBUG",
-)
+def get_weather():
+    response = requests.get(
+        "https://api.open-meteo.com/v1/forecast", params={
+            "latitude": 51.5,
+            "longitude": -0.11,
+            "current": "temperature_2m",
+        },
+    )
+    return response.json()
+
+def main():
+    app = Application(
+        broker_address="localhost:9092",
+        loglevel="DEBUG",
+    )
+
 with app.get_producer() as producer:
+    weather = get_weather()
+    logging.degub("Got weather: %s")
     producer.produce(
         topic="weather_data_demo",
         key="London",
         value=json.dumps(weather),
     )
+
+if __name__ == "__main__":
+    logging.basicConfig(level=DEBUG)
+    main()
