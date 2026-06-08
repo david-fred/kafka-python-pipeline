@@ -9,6 +9,7 @@ def main():
         broker_address="localhost:9092",
         loglevel="DEBUG",
         consumer_group="weather_reader_group",
+        auto_offset_reset="earliest",
     )
 
     with app.get_consumer() as consumer:
@@ -28,6 +29,7 @@ def main():
                 key = msg.key().decode('utf-8') if msg.key() else None
                 value = json.loads(msg.value().decode('utf-8')) if msg.value() else None
                 offset = msg.offset()
+                consumer.store_offset(msg)
                 logging.info(f"Received message: key={key}, value={value}")
             breakpoint()
 
