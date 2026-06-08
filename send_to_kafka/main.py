@@ -37,4 +37,8 @@ def main():
             time.sleep(10)  
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        pass
+        logging.info("Shutting down producer...")
