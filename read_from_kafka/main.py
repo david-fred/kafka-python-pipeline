@@ -23,7 +23,11 @@ with app.get_consumer() as consumer:
         if msg.error() is not None:
             print(f"Kafka error occurred: {msg.error()}")
             continue
-      
+        else:
+            key = msg.key().decode('utf-8') if msg.key() else None
+            value = json.loads(msg.value().decode('utf-8')) if msg.value() else None
+            logging.info(f"Received message: key={key}, value={value}")
+            offset = msg.offset()
         breakpoint()
         
 
