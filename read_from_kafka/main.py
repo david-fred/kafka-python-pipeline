@@ -15,6 +15,15 @@ with app.get_consumer() as consumer:
 
     while True:
         msg = consumer.poll(1)
+
+        if msg is None: 
+            print("Waiting for messages...")
+            continue
+
+        if msg.error() is not None:
+            print(f"Kafka error occurred: {msg.error()}")
+            continue
+      
         breakpoint()
         
 
