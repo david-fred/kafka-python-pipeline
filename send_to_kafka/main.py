@@ -1,7 +1,10 @@
 import requests
+import time
 import json
 import logging
 from quixstreams import Application
+
+logging.basicConfig(level=logging.DEBUG)
 
 def get_weather():
     response = requests.get(
@@ -19,15 +22,19 @@ def main():
         loglevel="DEBUG",
     )
 
-with app.get_producer() as producer:
-    weather = get_weather()
-    logging.degub("Got weather: %s")
-    producer.produce(
-        topic="weather_data_demo",
-        key="London",
-        value=json.dumps(weather),
-    )
+    with app.get_producer() as producer:
+        while True:
+            weather = get_weather()
+            logging.debug("Got weather: %s", weather)
+
+            producer.produce(
+                topic="weather_data_demo",
+                key="London",
+                value=json.dumps(weather),
+            )
+
+            logging.info("Produced! Sent weather data to Kafka")
+            time.sleep(900)  # Sleep for 15 minutes
 
 if __name__ == "__main__":
-    logging.basicConfig(level=DEBUG)
     main()
