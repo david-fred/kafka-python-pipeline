@@ -19,7 +19,7 @@ def main():
 		kelvin = celcius + 273.15
 	
 		new_msg = {
-			"celcius": clecius,
+			"celcius": celcius,
                 	"farenheit": farenheit,
                 	"kelvin": kelvin,
 		}
@@ -33,7 +33,7 @@ def main():
 	sdf = sdf.to_topic(output_topic)
 		
 
-	app.run(sdf)	
+	app.run()	
 
 if __name__ == "__main__":
 	logging.basicConfig(level="DEBUG")
