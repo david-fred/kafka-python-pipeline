@@ -11,17 +11,17 @@ def main():
 	)
 
 	input_topic = app.topic("weather_data_demo")
-	output_topic = app.topic("tmp")
+	output_topic = app.topic("weather_i18n")
 	
-	def transform(msg):
-		celcius = msg['current']['temperature_2m']
-		farenheit = (celcius * 9/5) + 32
+	def i18n_weather(msg):
+		celcius = msg["current"]["temperature_2m"]
+		farenheit = (celcius * 9 / 5) + 32
 		kelvin = celcius + 273.15
 	
 		new_msg = {
 			"celcius": celcius,
-                	"farenheit": farenheit,
-                	"kelvin": kelvin,
+                	"farenheit": round(farenheit, 2),
+                	"kelvin": round(kelvin, 2),
 		}
 
 		logging.debug("Returning: %s", new_msg)
@@ -33,7 +33,7 @@ def main():
 	sdf = sdf.to_topic(output_topic)
 		
 
-	app.run()	
+	app.run(sdf)	
 
 if __name__ == "__main__":
 	logging.basicConfig(level="DEBUG")
