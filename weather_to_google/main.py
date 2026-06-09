@@ -20,7 +20,7 @@ def reducer_fn(summary, msg):
 	return {
 		"open": summary["open"],
 		"high": max(summary["high"], temperature),
-		"low": max(summary["low"], temperature),
+		"low": min(summary["low"], temperature),
 		"close": temperature,
 	}
 
@@ -33,7 +33,7 @@ def main():
 		auto_offset_reset="earliest",
 	)
 
-	input_topic = app.topic(weather_data_demo)
+	input_topic = app.topic("weather_data_demo")
 
 	sdf = app.dataframe(input_topic)
 	
@@ -44,7 +44,7 @@ def main():
 	sdf = sdf.reduce(
 		initializer=initializer_fn,
 		reducer= reducer_fn,
-	)
+	).final()
 
 	sdf.update(lambda msg: logging.debug("Got: %s", msg))
 	
@@ -56,4 +56,4 @@ def main():
 
 if __name__ == "__main__":
 	logging.basicConfig(level="DEBUG")
-	main()
+	main() 
