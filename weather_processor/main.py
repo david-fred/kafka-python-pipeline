@@ -14,9 +14,16 @@ def main():
 	output_topic = app.topic("tmp")
 	
 	def transform(msg):
-		
-		new_msg = msg
-		
+		celcius = msg['current']['temperature_2m']
+		farenheit = (celcius * 9/5) + 32
+		kelvin = celcius + 273.15
+	
+		new_msg = {
+			"celcius": clecius,
+                	"farenheit": farenheit,
+                	"kelvin": kelvin,
+		}
+
 		logging.debug("Returning: %s", new_msg)
 	
 		return new_msg
