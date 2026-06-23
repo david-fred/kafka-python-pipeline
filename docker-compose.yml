@@ -1,0 +1,30 @@
+version: "3.7"
+services:
+  rp-node-0:
+    image: docker.redpanda.com/redpandadata/redpanda:v23.2.1
+    command:
+      - redpanda start
+      - --smp 1
+      - --memory 1G
+      - --kafka-addr PLAINTEXT://0.0.0.0:29092,OUTSIDE://0.0.0.0:9092
+      - --advertise-kafka-addr PLAINTEXT://rp-node-0:29092,OUTSIDE://localhost:9092
+      - --pandaproxy-addr 0.0.0.0:28082,OUTSIDE://0.0.0.0:8082
+      - --advertise-pandaproxy-addr PLAINTEXT://rp-node-0:28082,OUTSIDE://localhost:8082
+      - --rpc-addr 0.0.0.0:33145
+      - --advertise-rpc-addr rp-node-0:33145
+      - --mode dev-container
+    ports:
+      - 9092:9092
+      - 8082:8082
+  rp-console:
+    image: docker.redpanda.com/redpandadata/console:v2.3.1
+    entrypoint: /bin/sh
+    command: -c "echo \"\$\$CONSOLE_CONFIG_FILE\" > /tmp/config.yml; /app/console --config.filepath=/tmp/config.yml"
+    ports:
+      - 8080:8080
+    environment:
+      CONSOLE_CONFIG_FILE: |
+        kafka:
+          brokers: ["rp-node-0:29092"]
+    depends_on:
+      - rp-node-0
