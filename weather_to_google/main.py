@@ -2,6 +2,7 @@ import logging
 from quixstreams import Application
 from uuid import uuid4
 from datetime import timedelta
+import pygsheets 
 
 def initializer_fn(msg):
 	temperature = msg['current']['temperature_2m']
@@ -56,4 +57,9 @@ def main():
 
 if __name__ == "__main__":
 	logging.basicConfig(level="DEBUG")
-	main() 
+	#main() 
+
+	google_api = pygsheets.authorize(service_account_file="extended-ascent-472512-j1-5d4b3cf0890f.json")
+	workspace = google_api.open('Weather Data Dashboard')
+	print(workspace)
+	
