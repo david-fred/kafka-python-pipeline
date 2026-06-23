@@ -30,7 +30,7 @@ def main():
 		broker_address="localhost:9092",
 		loglevel="DEBUG",
 		
-		consumer_group=str(uuid4()),
+		consumer_group="weather_to_google_",
 		auto_offset_reset="earliest",
 	)
 
@@ -48,18 +48,32 @@ def main():
 	).final()
 
 	sdf.update(lambda msg: logging.debug("Got: %s", msg))
-	
-	#sdf = sdf.send_to_google_sheets(..)
-	
 
+	google_api = pygsheets.authorize(
+		service_account_file="extended-ascent-472512-j1-5d4b3cf0890f.json"
+	)
+	workspace = google_api.open("Weather Data Dashboard")
+	sheet = workspace[0]
+	sheet.update_values(
+		"A1",
+		[["Start", "End", "Open", "High", "Low", "Close", "Date",]],
+	)
+
+	def to_google(msg):
+		sheet.insert_rows(1, values=[
+			msg['start'],
+			msg['end'],
+			msg['values']['open'],
+			msg['values']['high'],
+			msg['values']['low'],
+			msg['values']['close'],
+			"=EPOCHTODATE(A2 / 1000)",
+		], )
+
+	sdf = sdf.apply(to_google)
 	app.run(sdf)
 
 
 if __name__ == "__main__":
 	logging.basicConfig(level="DEBUG")
-	#main() 
-
-	google_api = pygsheets.authorize(service_account_file="extended-ascent-472512-j1-5d4b3cf0890f.json")
-	workspace = google_api.open('Weather Data Dashboard')
-	print(workspace)
-	
+	main() 
