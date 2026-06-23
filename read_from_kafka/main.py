@@ -29,7 +29,7 @@ def main():
                 key = msg.key().decode('utf-8') if msg.key() else None
                 value = json.loads(msg.value().decode('utf-8')) if msg.value() else None
                 offset = msg.offset()
-                consumer.store_offset(msg)
+                consumer.store_offsets(msg)
                 logging.info(f"Received message: key={key}, value={value}")
             breakpoint()
 
