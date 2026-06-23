@@ -29,7 +29,7 @@ def main():
 		return new_msg
 		
 	sdf = app.dataframe(input_topic)
-	sdf = sdf.apply(transform)
+	sdf = sdf.apply(i18n_weather)
 	sdf = sdf.to_topic(output_topic)
 		
 
