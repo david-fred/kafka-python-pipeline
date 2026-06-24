@@ -5,12 +5,23 @@ from pprint import pformat
 from quixstreams import Application
 from requests_sse import EventSource, InvalidStatusCodeError
 
+def handle_stats(stats_msg):
+    stats = json.loads(stats_msg)
+	logging.info("Producer stats: %s", pformat(stats))
 
 def main():
     logging.info("START")
     app = Application(
         broker_address="localhost:9092",
         loglevel="DEBUG",
+        producer_extra_config={
+            "statistics.interval.ms": 30000,
+            "stats_cb": handle_stats, 
+            "debug": "msg",
+            "linger.ms": 200,  
+            "batch.size": 5 * 1024 * 1024, 
+            "compression.type": "gzip"             
+		},
     )
 
     # Outer context manager keeps the Kafka producer pool open
